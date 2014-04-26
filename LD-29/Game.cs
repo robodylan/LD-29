@@ -14,31 +14,25 @@ namespace LD_29
 {
     class Game
     {
-        //Handle Window Close
-            public static void OnClose(object sender, EventArgs e){
-                ((RenderWindow)sender).Close();
-            }
+
 
         public static string Title = "One Who Shall Not Be Named Yet";
+        //Set Screen Boundries
+        Rectangle r = Screen.PrimaryScreen.Bounds;
+        //Create window for drawing
+        public static RenderWindow window = new RenderWindow(new VideoMode((uint)(r.Width * 0.9f), (uint)(r.Height * 0.9f)), Title);
         public static void Start()
         {
-            //Find Screen boundries.
-            Rectangle r = Screen.PrimaryScreen.Bounds;
-            //Create Window
-            RenderWindow window = new RenderWindow(new VideoMode((uint)(r.Width * 0.9f), (uint)(r.Height * 0.9f)), Title);
-            window.Closed += new EventHandler(OnClose);
-            window.SetFramerateLimit(120);
-            //Load All Assets Here
-
             //Begin Main Loop
             while (window.IsOpen())
             {
                 //Check For Window Events
                 window.DispatchEvents();
                 
-                //Draw On Window
-                Draw();
+                //Update all 
+                Update();
                 //Update window
+                window.Display();
             }
 
         }
@@ -46,7 +40,6 @@ namespace LD_29
         //Method for drawing all assets
         public static void Draw()
         {
-
         }
     }
 }
