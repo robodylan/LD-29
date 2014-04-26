@@ -28,7 +28,7 @@ namespace LD_29
             {
                 //Check For Window Events
                 window.DispatchEvents();
-                
+
                 //Update all 
                 Update();
                 //Update window
@@ -38,8 +38,9 @@ namespace LD_29
         }
 
         //Method for drawing all assets
-        public static void Draw()
+        public static void Update()
         {
+
         }
     }
 }
