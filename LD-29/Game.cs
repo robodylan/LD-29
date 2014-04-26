@@ -21,7 +21,17 @@ namespace LD_29
         public static Rectangle r = Screen.PrimaryScreen.Bounds;
         //Create window for drawing
         public static RenderWindow window = new RenderWindow(new VideoMode((uint)(r.Width * 0.9f), (uint)(r.Height * 0.9f)), Title);
+<<<<<<< HEAD
 
+=======
+        private string p;
+
+        public Game(string p)
+        {
+            // TODO: Complete member initialization
+            this.p = p;
+        }
+>>>>>>> 95c894c99654dd9f8028db02a6d01eb54cec67e9
         public void Start()
         {
             //Begin Main Loop
