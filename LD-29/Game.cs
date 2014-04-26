@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace LD_29
 {
-    class Game
+    class Game : IDisposable
     {
 
 
@@ -21,7 +21,8 @@ namespace LD_29
         public static Rectangle r = Screen.PrimaryScreen.Bounds;
         //Create window for drawing
         public static RenderWindow window = new RenderWindow(new VideoMode((uint)(r.Width * 0.9f), (uint)(r.Height * 0.9f)), Title);
-        public static void Start()
+
+        public void Start()
         {
             //Begin Main Loop
             while (window.IsOpen())
@@ -85,10 +86,9 @@ namespace LD_29
 		/// </summary>
 		public RenderWindow window;
 
-		public Game(string Title)
+		public Game()
 		{
-			screen = Screen.PrimaryScreen.Bounds;
-			title = Title;
+
 			Keys = new bool[256];
 		}
 

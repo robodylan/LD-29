@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Box2DX;
-using 
 namespace LD_29
 {
 	internal static class Program
@@ -15,7 +13,7 @@ namespace LD_29
 		[STAThread]
 		private static void Main()
 		{
-			using (Game game = new Game("One Who Shall Not Be Named Yet")) game.Start(/* Game Args */);
+            using (Game game = new Game("aadsd")) game.Start(/* Game Args */);
 		}
 	}
 }
