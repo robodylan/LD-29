@@ -15,7 +15,12 @@ namespace LD_29
         public static string Title = "One Who Shall Not Be Named Yet";
         public static void Start()
         {
+            //Create Window
             RenderWindow window = new RenderWindow(new VideoMode(800,600),Title);
+
+
+            
+
         }
     }
 }
