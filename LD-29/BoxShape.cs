@@ -18,6 +18,8 @@ namespace LD_29
 
 		public BoxShape(float diameterX, float diameterY, PhysicsParams p)
 		{
+			diameterX *= 2;
+			diameterY *= 2;
 			Body = BodyFactory.CreateRectangle(PhysConfig.world, diameterX, diameterY, p.Density);
 			Body.Position = new Vector2(p.X, p.Y);
 			Body.IsBullet = !p.CanSleep;
