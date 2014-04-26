@@ -14,9 +14,7 @@ namespace LD_29
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Launcher());
+            Game.Start(/* Game Args */);
         }
     }
 }
