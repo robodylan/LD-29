@@ -14,49 +14,6 @@ using System.Windows.Forms;
 
 namespace LD_29
 {
-    class Game : IDisposable
-    {
-
-
-        public static string Title = "One Who Shall Not Be Named Yet";
-        //Set Screen Boundries
-        public static Rectangle r = Screen.PrimaryScreen.Bounds;
-        //Create window for drawing
-        public static RenderWindow window = new RenderWindow(new VideoMode((uint)(r.Width * 0.9f), (uint)(r.Height * 0.9f)), Title);
-<<<<<<< HEAD
-
-=======
-        private string p;
-
-        public Game(string p)
-        {
-            // TODO: Complete member initialization
-            this.p = p;
-        }
->>>>>>> 95c894c99654dd9f8028db02a6d01eb54cec67e9
-        public void Start()
-        {
-            //Begin Main Loop
-            while (window.IsOpen())
-            {
-                //Check For Window Events
-                window.DispatchEvents();
-
-                //Update all 
-                Update();
-                //Update window
-                window.Display();
-            }
-
-        }
-
-        //Method for drawing all assets
-        public static void Update()
-        {
-
-        }
-    }
-}
 	public class Game : IDisposable
 	{
 		/// <summary>
@@ -105,9 +62,10 @@ namespace LD_29
 		/// </summary>
 		public RenderWindow window;
 
-		public Game()
+		public Game(string Title)
 		{
-
+			screen = Screen.PrimaryScreen.Bounds;
+			title = Title;
 			Keys = new bool[256];
 		}
 
@@ -208,4 +166,5 @@ namespace LD_29
 		public void Dispose()
 		{
 		}
+	}
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 namespace LD_29
 {
 	public class Program
@@ -13,12 +14,7 @@ namespace LD_29
 		[STAThread]
 		private static void Main()
 		{
-<<<<<<< HEAD
-            using (Game game = new Game("aadsd")) game.Start(/* Game Args */);
-=======
-            Game game = new Game(""); 
-            game.Start(/* Game Args */);
->>>>>>> 95c894c99654dd9f8028db02a6d01eb54cec67e9
+			using (Game game = new Game("One Who Shall Not Be Named Yet")) game.Start(/* Game Args */);
 		}
 	}
 }
