@@ -87,8 +87,7 @@
   </Target>-->
   <Import Project="packages\Baseclass.Contrib.Nuget.Output.1.0.3\build\net40\Baseclass.Contrib.Nuget.Output.targets" Condition="Exists('packages\Baseclass.Contrib.Nuget.Output.1.0.3\build\net40\Baseclass.Contrib.Nuget.Output.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)\Content\*" "$(ProjectDir)\$(OutDir)\Content\" /s /i /y
-xcopy "$(ProjectDir)\Dep\*" "$(ProjectDir)\$(OutDir)\" /s /i /y
-</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(ProjectDir)Content\*" "$(ProjectDir)$(OutDir)Content\" /s /i /y
+xcopy "$(ProjectDir)Dep\*" "$(ProjectDir)$(OutDir)" /s /i /y</PostBuildEvent>
   </PropertyGroup>
 </Project>
