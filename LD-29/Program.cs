@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace LD_29
 {
-	internal static class Program
+	public class Program
 	{
 		/// <summary>
 		/// The main entry point for the application.

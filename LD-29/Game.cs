@@ -1,4 +1,6 @@
-﻿//Import SFML
+﻿using LD_29.Level;
+
+//Import SFML
 using SFML.Audio;
 using SFML.Graphics;
 using SFML.Window;
@@ -31,6 +33,13 @@ namespace LD_29
 			}
 		}
 
+		private Texture tex;
+		private Sprite spr;
+
+		private BoxShape character;
+
+		private Level.Level testlevel;
+
 		/// <summary>
 		/// Internal title
 		/// </summary>
@@ -61,6 +70,19 @@ namespace LD_29
 		}
 
 		/// <summary>
+		/// Load things
+		/// </summary>
+		public void Load()
+		{
+			testlevel = LevelLoader.LoadLevel("Level0/");
+			testlevel.ComputePhysics();
+			character = new BoxShape(1, 1, new PhysicsParams() { Static = false, Density = 1.0f, X = 6, Y = 80, IsSleeping = false });
+			tex = new Texture("Content/block.png");
+			spr = new Sprite(tex);
+			spr.Scale = new Vector2f(0.15f, 0.15f);
+		}
+
+		/// <summary>
 		/// Create window for drawing
 		/// </summary>
 		public void Start()
@@ -70,6 +92,8 @@ namespace LD_29
 			window.KeyPressed += window_KeyPressed;
 			window.KeyReleased += window_KeyReleased;
 			window.Closed += window_Closed;
+
+			Load();
 
 			// Begin Main Loop
 			while (window.IsOpen())
@@ -116,6 +140,8 @@ namespace LD_29
 		/// </summary>
 		public void Update()
 		{
+			PhysConfig.world.Step(1 / 60.0f);
+			spr.Position = new Vector2f(character.Body.Position.X * 64 * 0.15f, character.Body.Position.Y * 64 * 0.15f);
 		}
 
 		/// <summary>
@@ -123,6 +149,8 @@ namespace LD_29
 		/// </summary>
 		public void Draw()
 		{
+			testlevel.Draw(window);
+			window.Draw(spr);
 		}
 
 		public bool IsKeyDown(Keyboard.Key key)

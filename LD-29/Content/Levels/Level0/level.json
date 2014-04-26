@@ -1,0 +1,20 @@
+{
+    "Name": "The Cave",
+    "Scale": 0.01,
+    "CollisionMap": "MidLayer.png",
+    "TopLayerMap": "white.png",
+    "BottomLayerMap": "white.png",
+    "Entities": [],
+    "Start": {
+        "X": 0, "Y": 0
+    },
+    "Finish": {
+        "X": 0, "Y": 0
+    },
+    "SecretExit": {
+        "X": 0, "Y": 0
+    },
+    "HasSecretExit": false,
+    "NextLevel": 0,
+    "SecretNextLevel": 0
+}

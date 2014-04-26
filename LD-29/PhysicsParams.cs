@@ -52,5 +52,8 @@ namespace LD_29
 
 		[DefaultValue(0)]
 		public float Restitution { get; set; }
+
+		[DefaultValue(false)]
+		public bool Ghost { get; set; }
 	}
 }
