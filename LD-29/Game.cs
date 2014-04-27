@@ -241,10 +241,10 @@ namespace LD_29
 		/// <summary>
 		/// Draw Everything
 		/// </summary>
-        public Sprite Char = new Sprite( new Texture("Content/Player.png"), new IntRect(0,0,64,64));
+		public Sprite Char = new Sprite(new Texture("Content/Player.png"), new IntRect(0, 0, 64, 64));
+
 		public void Draw()
 		{
-			window.Draw(Char);
 			Vector2 old = new Vector2();
 			bool blue = false;
 			for (int i = 0; i <= 360; i += 6)
@@ -269,6 +269,8 @@ namespace LD_29
 				blue = !blue;
 				old = r;
 			}
+			Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2 - 70, Player.CameraY + window.Size.Y / 2 - 30);
+			window.Draw(Char);
 		}
 
 		public Vector2f to2f(Vector2 v)
