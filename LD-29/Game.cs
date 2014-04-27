@@ -241,8 +241,10 @@ namespace LD_29
 		/// <summary>
 		/// Draw Everything
 		/// </summary>
+        public Sprite Char = new Sprite( new Texture("Content/Player.png"), new IntRect(0,0,64,64));
 		public void Draw()
 		{
+			window.Draw(Char);
 			Vector2 old = new Vector2();
 			bool blue = false;
 			for (int i = 0; i <= 360; i += 6)
