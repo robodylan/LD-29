@@ -265,7 +265,7 @@ namespace LD_29
 					}
 				}
 			}
-			return input.Point1 + closestFraction * (input.Point2 - input.Point1);
+			return input.Point1 + closestFraction * (input.Point2 - input.Point1) * 1.5f;
 		}
 
 		public float RayCastDistance(float maxRayLength, float rotation)
