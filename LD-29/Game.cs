@@ -210,11 +210,15 @@ namespace LD_29
 		/// <summary>
 		/// Draw Everything
 		/// </summary>
+        public Sprite Char = new Sprite( new Texture("Content/Player.png"), new IntRect(0,0,64,64));
 		public void Draw()
 		{
 			Vector2f old = new Vector2f();
-				for (int i = 0; i < 360; i += 7)
+				for (int i = 0; i <= 360; i += 4)
  				{
+                    //Main Character;
+                    Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2, Player.CameraY + window.Size.Y / 2);
+                    window.Draw(Char);
  					//Vector2 r = RayCast(50, -1.57079632679f);
  					Vector2 r = RayCast(50, i * 0.0174532925f);
  					raycpoint.Position = new Vector2f(r.X, r.Y);

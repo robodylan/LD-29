@@ -10,8 +10,8 @@ namespace LD_29
 {
 	public class Player
 	{
-		public float CameraX;
-		public float CameraY;
+		public static int CameraX;
+		public static int CameraY;
 
 		public Player()
 		{
