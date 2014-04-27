@@ -76,6 +76,7 @@
     <Compile Include="Level\LevelLoader.cs" />
     <Compile Include="Level\Position.cs" />
     <Compile Include="Level\StaticBlock.cs" />
+    <Compile Include="OffsetSprite.cs" />
     <Compile Include="PhysConfig.cs" />
     <Compile Include="PhysicsParams.cs" />
     <Compile Include="PhysicsSprite.cs" />

@@ -9,6 +9,7 @@ using SFML.Graphics;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -38,6 +39,7 @@ namespace LD_29
 
 		private Texture tex;
 		private PhysicsSprite spr;
+		private OffsetSprite raycpoint;
 		private int Width, Height;
 
 		private CapsuleShape character;
@@ -49,6 +51,8 @@ namespace LD_29
 		private bool OnGround = false;
 
 		private Vector2 velocityOld;
+
+		private Vertex[] line;
 
 		/// <summary>
 		/// Internal title
@@ -87,15 +91,21 @@ namespace LD_29
 			testlevel = LevelLoader.LoadLevel("Level0/");
 			testlevel.ComputePhysics();
 			character = new CapsuleShape(0.01f, 0.75f, new PhysicsParams() { Static = false, Density = 1.0f, X = 6, Y = 56, IsSleeping = false, FixedRotation = true, Friction = 0.5f });
-			tex = new Texture("Content/block.png");
+			tex = new Texture("Content/character.png");
 			spr = new PhysicsSprite(character.Body, character.Width, character.Height);
+			raycpoint = new OffsetSprite(10, 10);
+			raycpoint.Texture = tex;
+			raycpoint.Scale = new Vector2f(Global.Scale, Global.Scale) * 0.1f;
 			character.Body.OnSeparation += Body_OnSeparation;
 			character.Body.OnCollision += Body_OnCollision;
 			spr.Texture = tex;
 			Console.WriteLine(Global.Scale);
 			spr.Scale = new Vector2f(Global.Scale * 3, Global.Scale * 3);
-			spr.Offset = new Vector2f(128, -128) * Global.Scale;
+			spr.Offset = new Vector2f(32, -64 - 128) * Global.Scale;
 			player = new Player();
+			line = new Vertex[2];
+			line[0] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
+			line[1] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
 		}
 
 		private bool Body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
@@ -211,6 +221,51 @@ namespace LD_29
 		{
 			testlevel.Draw(window);
 			spr.DrawTransformed(window, RenderStates.Default);
+			for (int i = 0; i < 360; i += 10)
+			{
+				//Vector2 r = RayCast(50, -1.57079632679f);
+				Vector2 r = RayCast(50, i * 0.0174532925f);
+				raycpoint.Position = new Vector2f(r.X, r.Y);
+				raycpoint.DrawTransformed(window, RenderStates.Default);
+				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset;
+				line[1].Position = raycpoint.Position;
+				Console.WriteLine(line[0].Position);
+				Console.WriteLine(line[1].Position);
+				window.Draw(line, PrimitiveType.Lines);
+			}
+		}
+
+		public Vector2f to2f(Vector2 v)
+		{
+			return new Vector2f(v.X, v.Y);
+		}
+
+		public Vector2f Offset(Vector2f v)
+		{
+			return new Vector2f(v.X * Global.Scale, v.Y * Global.Scale) + Global.Offset;
+		}
+
+		public Vector2 RayCast(float maxRayLength, float rotation)
+		{
+			RayCastInput input = new RayCastInput();
+			input.Point1 = character.Body.Position;
+			input.Point2 = input.Point1 + maxRayLength * new Vector2((float)Math.Sin(rotation), (float)Math.Cos(rotation));
+			input.MaxFraction = 1;
+			float closestFraction = 1;
+			foreach (Body b in PhysConfig.world.BodyList)
+			{
+				foreach (Fixture f in b.FixtureList)
+				{
+					RayCastOutput output;
+					if (!f.RayCast(out output, ref input, 0))
+						continue;
+					if (output.Fraction < closestFraction)
+					{
+						closestFraction = output.Fraction;
+					}
+				}
+			}
+			return input.Point1 + closestFraction * (input.Point2 - input.Point1);
 		}
 
 		public bool IsKeyDown(Keyboard.Key key)

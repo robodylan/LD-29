@@ -1,6 +1,7 @@
 ﻿using FarseerPhysics.Dynamics;
 using Microsoft.Xna.Framework;
 using SFML.Graphics;
+using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,6 +24,7 @@ namespace LD_29.Level
 		private string name;
 		private int next, snext;
 		private Stopwatch sw;
+		private Vector2f BlockOffset;
 
 		public Level(int width, int height, List<Block> blocks, List<Block> topLayer, List<Block> bottomLayer, Position start, Position finish, Position secret, bool hasSecret, float scale, string name, int next, int snext)
 		{
@@ -39,6 +41,7 @@ namespace LD_29.Level
 			this.name = name;
 			this.next = next;
 			this.snext = snext;
+			BlockOffset = new Vector2f(-0.5f, -0.5f);
 			scale *= 0.5f;
 			this.scale = scale;
 			Global.Scale = scale;
@@ -133,7 +136,7 @@ namespace LD_29.Level
 		{
 			foreach (Block b in blocks)
 			{
-				blockSprite.Position = new SFML.Window.Vector2f(b.Position.X * scale * block.Size.X, b.Position.Y * scale * block.Size.Y) + Global.Offset;
+				blockSprite.Position = new SFML.Window.Vector2f(b.Position.X * scale * block.Size.X, b.Position.Y * scale * block.Size.Y) + Global.Offset + BlockOffset * 64;
 				r.Draw(blockSprite);
 			}
 		}
