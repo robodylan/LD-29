@@ -103,9 +103,10 @@ namespace LD_29
 			spr.Scale = new Vector2f(Global.Scale * 3, Global.Scale * 3);
 			spr.Offset = new Vector2f(32, -64 - 128) * Global.Scale;
 			player = new Player();
-			line = new Vertex[2];
+			line = new Vertex[3];
 			line[0] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
 			line[1] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
+			line[2] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
 		}
 
 		/// <summary>
@@ -211,18 +212,25 @@ namespace LD_29
 		/// </summary>
 		public void Draw()
 		{
-			for (int i = 0; i < 360; i += 4)
+			Vector2f old = new Vector2f();
+			for (int i = 0; i <= 360; i += 2)
 			{
 				//Vector2 r = RayCast(50, -1.57079632679f);
 				Vector2 r = RayCast(50, i * 0.0174532925f);
+				if (old.X == 0 && old.Y == 0)
+				{
+					old = to2f(r);
+					continue;
+				}
 				Vector2f off = new Vector2f(32, 0);
 				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - off;
-				line[1].Position = Offset(new Vector2f(r.X, r.Y)) - off;
+				line[1].Position = Offset(to2f(r)) - off;
+				line[2].Position = Offset(old) - off;
 				line[0].Color = SFML.Graphics.Color.White;
 				line[1].Color = SFML.Graphics.Color.Black;
-				Console.WriteLine(line[0].Position);
-				Console.WriteLine(line[1].Position);
-				window.Draw(line, PrimitiveType.Lines);
+				line[2].Color = SFML.Graphics.Color.Black;
+				window.Draw(line, PrimitiveType.Triangles);
+				old = to2f(r);
 			}
 			spr.DrawTransformed(window, RenderStates.Default);
 		}
