@@ -1,5 +1,7 @@
 ﻿using FarseerPhysics.Collision;
 using FarseerPhysics.Dynamics;
+using FarseerPhysics.Dynamics.Joints;
+using FarseerPhysics.Factories;
 using LD_29.Level;
 using Microsoft.Xna.Framework;
 
@@ -43,6 +45,12 @@ namespace LD_29
 		private OffsetSprite raycpoint;
 		private int Width, Height;
 
+		public bool grappled { get; set; }
+
+		private RopeJoint graplingJoint { get; set; }
+
+		private Body grapBody = null;
+
 		private CapsuleShape character;
 
 		private Level.Level testlevel;
@@ -54,6 +62,8 @@ namespace LD_29
 		private Vector2 velocityOld;
 
 		private Vertex[] line;
+
+		private float rota = 0;
 
 		/// <summary>
 		/// Internal title
@@ -121,6 +131,8 @@ namespace LD_29
 
 			window.KeyPressed += window_KeyPressed;
 			window.KeyReleased += window_KeyReleased;
+			window.MouseButtonPressed += window_MouseButtonPressed;
+			window.MouseButtonReleased += window_MouseButtonReleased;
 			window.Closed += window_Closed;
 
 			window.SetFramerateLimit(60);
@@ -136,13 +148,31 @@ namespace LD_29
 				// Update all
 				Update();
 
-				window.Clear(SFML.Graphics.Color.Black);
+				window.Clear(new SFML.Graphics.Color(25, 165, 190));
 
 				// Draw Content
 				Draw();
 
 				// Bring drawn to user
 				window.Display();
+			}
+		}
+
+		private void window_MouseButtonReleased(object sender, MouseButtonEventArgs e)
+		{
+			if (grappled)
+			{
+				grapBody.Dispose();
+				graplingJoint.Enabled = false;
+				grappled = false;
+			}
+		}
+
+		private void window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
+		{
+			if (!grappled)
+			{
+				grappled = Graple();
 			}
 		}
 
@@ -181,30 +211,31 @@ namespace LD_29
 			{
 				if (IsKeyDown(Keyboard.Key.D))
 				{
-					character.Body.LinearVelocity += new Vector2(1.0f, 0.0f);
+					character.Body.LinearVelocity += new Vector2(0.3f, 0.0f);
 				}
 				if (IsKeyDown(Keyboard.Key.A))
 				{
-					character.Body.LinearVelocity -= new Vector2(1.0f, 0.0f);
+					character.Body.LinearVelocity -= new Vector2(0.3f, 0.0f);
 				}
 				if (IsKeyDown(Keyboard.Key.Space))
 				{
-					character.Body.LinearVelocity = new Vector2(character.Body.LinearVelocity.X, -20.0f);
+					character.Body.LinearVelocity = new Vector2(character.Body.LinearVelocity.X, -5.0f);
 				}
 			}
 			else
 			{
 				if (IsKeyDown(Keyboard.Key.D))
 				{
-					character.Body.LinearVelocity += new Vector2(0.1f, 0.0f);
+					character.Body.LinearVelocity += new Vector2(0.05f, 0.0f);
 				}
 				if (IsKeyDown(Keyboard.Key.A))
 				{
-					character.Body.LinearVelocity -= new Vector2(0.1f, 0.0f);
+					character.Body.LinearVelocity -= new Vector2(0.05f, 0.0f);
 				}
 			}
 			if (character.Body.LinearVelocity == velocityOld) OnGround = true;
 			velocityOld = character.Body.LinearVelocity;
+			rota += 0.001f;
 		}
 
 		/// <summary>
@@ -212,25 +243,30 @@ namespace LD_29
 		/// </summary>
 		public void Draw()
 		{
-			Vector2f old = new Vector2f();
-				for (int i = 0; i < 360; i += 7)
- 				{
- 					//Vector2 r = RayCast(50, -1.57079632679f);
- 					Vector2 r = RayCast(50, i * 0.0174532925f);
- 					raycpoint.Position = new Vector2f(r.X, r.Y);
- 					raycpoint.DrawTransformed(window, RenderStates.Default);
- 					line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset;
- 					line[1].Position = Offset(new Vector2f(r.X, r.Y));
-			        Vector2f off = new Vector2f(32, 0);
-				    line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - off;
-				    line[1].Position = Offset(new Vector2f(r.X, r.Y)) - off;
- 					line[0].Color = SFML.Graphics.Color.Blue;
- 					line[1].Color = SFML.Graphics.Color.Black;
- 					Console.WriteLine(line[0].Position);
- 					Console.WriteLine(line[1].Position);
- 					window.Draw(line, PrimitiveType.Lines);
- 				}
-
+			Vector2 old = new Vector2();
+			bool blue = false;
+			for (int i = 0; i <= 360; i += 6)
+			{
+				//Vector2 r = RayCast(50, -1.57079632679f);
+				Vector2 r = RayCast(50, i * 0.0174532925f + rota);
+				if (old.X == 0 && old.Y == 0)
+				{
+					old = r;
+					continue;
+				}
+				raycpoint.Position = to2f(r);
+				Vector2f off = new Vector2f(32, 0);
+				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - off;
+				line[1].Position = Offset(to2f(r)) - off;
+				line[2].Position = Offset(to2f(old)) - off;
+				SFML.Graphics.Color c = blue ? new SFML.Graphics.Color(0, 60, 70) : new SFML.Graphics.Color(0, 90, 100);
+				line[0].Color = c;
+				line[1].Color = c;
+				line[2].Color = c;
+				window.Draw(line, PrimitiveType.Triangles);
+				blue = !blue;
+				old = r;
+			}
 		}
 
 		public Vector2f to2f(Vector2 v)
@@ -264,6 +300,25 @@ namespace LD_29
 				}
 			}
 			return input.Point1 + closestFraction * (input.Point2 - input.Point1) * 1.5f;
+		}
+
+		public bool Graple()
+		{
+			Vector2f pos1 = Offset(to2f(character.Body.Position));
+			Vector2i pos2 = Mouse.GetPosition(window) + new Vector2i(32, 0);
+			float rad = (float)Math.Atan2(pos2.X - pos1.X, pos2.Y - pos1.Y);
+			Vector2 ray = RayCast(10, rad);
+			float len = RayCastDistance(10, rad);
+			if (len < 900)
+			{
+				grapBody = BodyFactory.CreateCircle(PhysConfig.world, 0.1f, 0.0f, ray);
+				grapBody.IsStatic = true;
+				graplingJoint = new RopeJoint(character.Body, grapBody, new Vector2(), new Vector2());
+				graplingJoint.MaxLength = len * 16;
+				PhysConfig.world.AddJoint(graplingJoint);
+				return true;
+			}
+			return false;
 		}
 
 		public float RayCastDistance(float maxRayLength, float rotation)
