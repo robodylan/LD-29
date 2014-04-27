@@ -90,7 +90,7 @@ namespace LD_29
 		public void Load()
 		{
 			testlevel = LevelLoader.LoadLevel("Level" + Score + "/");
-            Score += 1;
+			Score += 1;
 			testlevel.ComputePhysics();
 			character = new CapsuleShape(0.01f, 0.75f, new PhysicsParams() { Static = false, Density = 20.0f, X = 6, Y = 56, IsSleeping = false, FixedRotation = true, Friction = 0.5f });
 			tex = new Texture("Content/character.png");
@@ -211,19 +211,20 @@ namespace LD_29
 		/// </summary>
 		public void Draw()
 		{
-			spr.DrawTransformed(window, RenderStates.Default);
-			for (int i = 0; i < 360; i += 10)
+			for (int i = 0; i < 360; i += 4)
 			{
 				//Vector2 r = RayCast(50, -1.57079632679f);
 				Vector2 r = RayCast(50, i * 0.0174532925f);
-				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset;
-				line[1].Position = Offset(new Vector2f(r.X, r.Y));
+				Vector2f off = new Vector2f(32, 0);
+				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - off;
+				line[1].Position = Offset(new Vector2f(r.X, r.Y)) - off;
 				line[0].Color = SFML.Graphics.Color.White;
 				line[1].Color = SFML.Graphics.Color.Black;
 				Console.WriteLine(line[0].Position);
 				Console.WriteLine(line[1].Position);
 				window.Draw(line, PrimitiveType.Lines);
 			}
+			spr.DrawTransformed(window, RenderStates.Default);
 		}
 
 		public Vector2f to2f(Vector2 v)
