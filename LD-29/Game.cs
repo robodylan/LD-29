@@ -231,7 +231,7 @@ namespace LD_29
  					Console.WriteLine(line[1].Position);
  					window.Draw(line, PrimitiveType.Lines);
                     //Main Character;
-                    Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2 - 70, Player.CameraY + window.Size.Y / 2 - 30);
+                    Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2 - 64, Player.CameraY + window.Size.Y / 2 - 32);
                     window.Draw(Char);
  				}
 
