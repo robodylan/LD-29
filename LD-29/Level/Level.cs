@@ -132,10 +132,18 @@ namespace LD_29.Level
 		{
 		}
 
+		public Vector2f Offset(Position v)
+		{
+			return new Vector2f(v.X * Global.Scale, v.Y * Global.Scale) + Global.Offset;
+		}
+
 		public void Draw(RenderWindow r)
 		{
 			foreach (Block b in blocks)
 			{
+				Vector2f transformed = Offset(b.Position);
+				if (transformed.X < 0 || transformed.Y < 0 || transformed.X > 128 * scale + Global.GameResolution.X || transformed.Y > Global.GameResolution.Y)
+					return;
 				blockSprite.Position = new SFML.Window.Vector2f(b.Position.X * scale * block.Size.X, b.Position.Y * scale * block.Size.Y) + Global.Offset + BlockOffset * 64;
 				r.Draw(blockSprite);
 			}

@@ -12,5 +12,7 @@ namespace LD_29
 		public static float Scale = 1.0f;
 
 		public static Vector2f Offset = new Vector2f();
+
+		public static Vector2f GameResolution = new Vector2f();
 	}
 }
