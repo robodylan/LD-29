@@ -12,20 +12,20 @@ using System.Threading.Tasks;
 
 namespace LD_29
 {
-	public class BoxShape
+	public class CapsuleShape
 	{
 		public Body Body { get; protected set; }
 
 		public float Width;
 		public float Height;
 
-		public BoxShape(float diameterX, float diameterY, PhysicsParams p)
+		public CapsuleShape(float height, float radius, PhysicsParams p)
 		{
-			diameterX *= 2;
-			diameterY *= 2;
-			Width = diameterX;
-			Height = diameterY;
-			Body = BodyFactory.CreateRectangle(PhysConfig.world, diameterX, diameterY, p.Density);
+			height *= 2;
+			radius *= 2;
+			Width = radius;
+			Height = height + radius;
+			Body = BodyFactory.CreateCapsule(PhysConfig.world, height, radius, p.Density);
 			Body.Position = new Vector2(p.X, p.Y);
 			Body.IsBullet = !p.CanSleep;
 			Body.Awake = !p.IsSleeping;

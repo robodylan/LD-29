@@ -41,6 +41,7 @@ namespace LD_29.Level
 			this.snext = snext;
 			scale *= 0.5f;
 			this.scale = scale;
+			Global.Scale = scale;
 			block = new Texture("Content/block.png");
 			block.Smooth = true;
 			blockSprite = new Sprite();
@@ -115,7 +116,7 @@ namespace LD_29.Level
 
 			foreach (Block b in physBlocks)
 			{
-				new BoxShape(0.5f, 0.5f, new PhysicsParams() { Static = true, X = b.Position.X, Y = b.Position.Y, Ghost = b.ID == Block.Coin });
+				new BoxShape(0.5f, 0.5f, new PhysicsParams() { Static = true, X = b.Position.X + 0.5f, Y = b.Position.Y, Ghost = b.ID == Block.Coin, Friction = 1.0f });
 			}
 			Console.WriteLine("Done in " + StopTime().ToString() + "!");
 		}
@@ -132,7 +133,7 @@ namespace LD_29.Level
 		{
 			foreach (Block b in blocks)
 			{
-				blockSprite.Position = new SFML.Window.Vector2f(b.Position.X * scale * block.Size.X, b.Position.Y * scale * block.Size.Y);
+				blockSprite.Position = new SFML.Window.Vector2f(b.Position.X * scale * block.Size.X, b.Position.Y * scale * block.Size.Y) + Global.Offset;
 				r.Draw(blockSprite);
 			}
 		}

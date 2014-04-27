@@ -65,7 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoxShape.cs" />
+    <Compile Include="CapsuleShape.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="Global.cs" />
     <Compile Include="Level\Block.cs" />
     <Compile Include="Level\JSONDescription.cs" />
     <Compile Include="Level\JSONEntity.cs" />
@@ -76,6 +78,7 @@
     <Compile Include="Level\StaticBlock.cs" />
     <Compile Include="PhysConfig.cs" />
     <Compile Include="PhysicsParams.cs" />
+    <Compile Include="PhysicsSprite.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,5 +1,4 @@
-﻿//Import SFML
-using SFML.Graphics;
+﻿using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +7,10 @@ using System.Threading.Tasks;
 
 namespace LD_29
 {
-	public class Player
+	public class Global
 	{
-		public float CameraX;
-		public float CameraY;
+		public static float Scale = 1.0f;
 
-		public Player()
-		{
-		}
+		public static Vector2f Offset = new Vector2f();
 	}
 }

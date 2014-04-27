@@ -1,4 +1,7 @@
-﻿using LD_29.Level;
+﻿using FarseerPhysics.Collision;
+using FarseerPhysics.Dynamics;
+using LD_29.Level;
+using Microsoft.Xna.Framework;
 
 //Import SFML
 using SFML.Audio;
@@ -34,11 +37,18 @@ namespace LD_29
 		}
 
 		private Texture tex;
-		private Sprite spr;
+		private PhysicsSprite spr;
+		private int Width, Height;
 
-		private BoxShape character;
+		private CapsuleShape character;
 
 		private Level.Level testlevel;
+
+		private Player player;
+
+		private bool OnGround = false;
+
+		private Vector2 velocityOld;
 
 		/// <summary>
 		/// Internal title
@@ -76,10 +86,27 @@ namespace LD_29
 		{
 			testlevel = LevelLoader.LoadLevel("Level0/");
 			testlevel.ComputePhysics();
-			character = new BoxShape(1, 1, new PhysicsParams() { Static = false, Density = 1.0f, X = 6, Y = 80, IsSleeping = false });
+			character = new CapsuleShape(0.01f, 0.75f, new PhysicsParams() { Static = false, Density = 1.0f, X = 6, Y = 56, IsSleeping = false, FixedRotation = true, Friction = 0.5f });
 			tex = new Texture("Content/block.png");
-			spr = new Sprite(tex);
-			spr.Scale = new Vector2f(0.15f, 0.15f);
+			spr = new PhysicsSprite(character.Body, character.Width, character.Height);
+			character.Body.OnSeparation += Body_OnSeparation;
+			character.Body.OnCollision += Body_OnCollision;
+			spr.Texture = tex;
+			Console.WriteLine(Global.Scale);
+			spr.Scale = new Vector2f(Global.Scale * 3, Global.Scale * 3);
+			spr.Offset = new Vector2f(128, -128) * Global.Scale;
+			player = new Player();
+		}
+
+		private bool Body_OnCollision(Fixture fixtureA, Fixture fixtureB, FarseerPhysics.Dynamics.Contacts.Contact contact)
+		{
+			OnGround = true;
+			return true;
+		}
+
+		public void Body_OnSeparation(Fixture fixtureA, Fixture fixtureB)
+		{
+			OnGround = false;
 		}
 
 		/// <summary>
@@ -88,6 +115,8 @@ namespace LD_29
 		public void Start()
 		{
 			window = new RenderWindow(new VideoMode((uint)(screen.Width * 0.9f), (uint)(screen.Height * 0.9f)), title);
+			Width = (int)window.Size.X;
+			Height = (int)window.Size.Y;
 
 			window.KeyPressed += window_KeyPressed;
 			window.KeyReleased += window_KeyReleased;
@@ -141,7 +170,38 @@ namespace LD_29
 		public void Update()
 		{
 			PhysConfig.world.Step(1 / 60.0f);
-			spr.Position = new Vector2f(character.Body.Position.X * 64 * 0.15f, character.Body.Position.Y * 64 * 0.15f);
+			Global.Offset = -new Vector2f(character.Body.Position.X * spr.Texture.Size.X * Global.Scale - Width * 0.5f, character.Body.Position.Y * spr.Texture.Size.Y * Global.Scale - Height * 0.5f);
+
+			if (OnGround)
+			{
+				if (IsKeyDown(Keyboard.Key.D))
+				{
+					character.Body.LinearVelocity += new Vector2(1.0f, 0.0f);
+				}
+				if (IsKeyDown(Keyboard.Key.A))
+				{
+					character.Body.LinearVelocity -= new Vector2(1.0f, 0.0f);
+				}
+				if (IsKeyDown(Keyboard.Key.Space))
+				{
+					Console.WriteLine(character.Body.LinearVelocity.Y);
+					if (character.Body.LinearVelocity.Y == 0)
+						character.Body.LinearVelocity += new Vector2(0.0f, -10.0f);
+				}
+			}
+			else
+			{
+				if (IsKeyDown(Keyboard.Key.D))
+				{
+					character.Body.LinearVelocity += new Vector2(0.1f, 0.0f);
+				}
+				if (IsKeyDown(Keyboard.Key.A))
+				{
+					character.Body.LinearVelocity -= new Vector2(0.1f, 0.0f);
+				}
+			}
+			if (character.Body.LinearVelocity == velocityOld) OnGround = true;
+			velocityOld = character.Body.LinearVelocity;
 		}
 
 		/// <summary>
@@ -150,7 +210,7 @@ namespace LD_29
 		public void Draw()
 		{
 			testlevel.Draw(window);
-			window.Draw(spr);
+			spr.DrawTransformed(window, RenderStates.Default);
 		}
 
 		public bool IsKeyDown(Keyboard.Key key)

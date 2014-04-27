@@ -34,7 +34,7 @@ namespace LD_29.Level
 		{
 			JSONDescription d = JsonConvert.DeserializeObject<JSONDescription>(File.ReadAllText("Content/Levels/" + path + "level.json"));
 			string name = d.Name;
-			float scale = Math.Min(Math.Max(d.Scale, 0.15f), 2.0f);
+			float scale = Math.Min(Math.Max(d.Scale, 0.5f), 2.0f);
 			Position start = new Position() { X = d.Start.X, Y = d.Start.Y };
 			Position finish = new Position() { X = d.Finish.X, Y = d.Finish.Y };
 			Position secret = new Position() { X = d.SecretExit.X, Y = d.SecretExit.Y };

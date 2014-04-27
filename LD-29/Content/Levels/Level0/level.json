@@ -1,6 +1,6 @@
 {
     "Name": "The Cave",
-    "Scale": 0.01,
+    "Scale": 1.0,
     "CollisionMap": "MidLayer.png",
     "TopLayerMap": "white.png",
     "BottomLayerMap": "white.png",
