@@ -14,7 +14,7 @@ namespace LD_29
 
 		static PhysConfig()
 		{
-			world = new World(new Vector2(0, 9.7f));
+			world = new World(new Vector2(0, 20));
 		}
 	}
 }

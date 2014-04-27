@@ -36,6 +36,7 @@ namespace LD_29
 			}
 		}
 
+        public int Score = 0;
 		private Texture tex;
 		private PhysicsSprite spr;
 		private int Width, Height;
@@ -84,7 +85,8 @@ namespace LD_29
 		/// </summary>
 		public void Load()
 		{
-			testlevel = LevelLoader.LoadLevel("Level0/");
+			testlevel = LevelLoader.LoadLevel("Level" + Score + "/");
+            Score =+ 1;
 			testlevel.ComputePhysics();
 			character = new CapsuleShape(0.01f, 0.75f, new PhysicsParams() { Static = false, Density = 1.0f, X = 6, Y = 56, IsSleeping = false, FixedRotation = true, Friction = 0.5f });
 			tex = new Texture("Content/block.png");
