@@ -37,6 +37,7 @@ namespace LD_29
 			}
 		}
 
+        public bool Win = false;
         public int Score = 0;
 		private Texture tex;
 		private PhysicsSprite spr;
@@ -228,12 +229,12 @@ namespace LD_29
 				//Vector2 r = RayCast(50, -1.57079632679f);
 				Vector2 r = RayCast(50, i * 0.0174532925f);
 				raycpoint.Position = new Vector2f(r.X, r.Y);
-				raycpoint.DrawTransformed(window, RenderStates.Default);
+				//raycpoint.DrawTransformed(window, RenderStates.Default);
 				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset;
 				line[1].Position = raycpoint.Position;
 				Console.WriteLine(line[0].Position);
 				Console.WriteLine(line[1].Position);
-				window.Draw(line, PrimitiveType.Lines);
+				//window.Draw(line, PrimitiveType.Lines);
 			}
 		}
 
