@@ -216,9 +216,6 @@ namespace LD_29
 			Vector2f old = new Vector2f();
 				for (int i = 0; i <= 360; i += 4)
  				{
-                    //Main Character;
-                    Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2, Player.CameraY + window.Size.Y / 2);
-                    window.Draw(Char);
  					//Vector2 r = RayCast(50, -1.57079632679f);
  					Vector2 r = RayCast(50, i * 0.0174532925f);
  					raycpoint.Position = new Vector2f(r.X, r.Y);
@@ -233,6 +230,9 @@ namespace LD_29
  					Console.WriteLine(line[0].Position);
  					Console.WriteLine(line[1].Position);
  					window.Draw(line, PrimitiveType.Lines);
+                    //Main Character;
+                    Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2 - 70, Player.CameraY + window.Size.Y / 2 - 30);
+                    window.Draw(Char);
  				}
 
 		}
