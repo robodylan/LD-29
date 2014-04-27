@@ -90,7 +90,7 @@ namespace LD_29
 		public void Load()
 		{
 			testlevel = LevelLoader.LoadLevel("Level" + Score + "/");
-			Score = +1;
+            Score += 1;
 			testlevel.ComputePhysics();
 			character = new CapsuleShape(0.01f, 0.75f, new PhysicsParams() { Static = false, Density = 20.0f, X = 6, Y = 56, IsSleeping = false, FixedRotation = true, Friction = 0.5f });
 			tex = new Texture("Content/character.png");
