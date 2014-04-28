@@ -360,6 +360,8 @@ namespace LD_29
 					canShoot = 10;
 				}
 			}
+            //Display Score
+            window.Draw(new Text("Hello",defaultFont));
 		}
 
 		public void Shoot()
