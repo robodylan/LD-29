@@ -38,15 +38,17 @@ namespace LD_29
 
 		private bool body_OnCollision(Fixture fixtureA, Fixture fixtureB, Contact contact)
 		{
-			if (fixtureA.CollisionGroup == 2)
+			if (fixtureA.CollisionCategories == Category.Cat16)
 			{
-				if (fixtureB.CollisionGroup == 3)
+				if (fixtureB.CollisionCategories == Category.Cat15)
 				{
-					OnHit(this, fixtureB);
+					if (OnHit != null)
+						OnHit(this, fixtureB);
 				}
 				else
 				{
-					OnBreak(this, EventArgs.Empty);
+					if (OnBreak != null)
+						OnBreak(this, EventArgs.Empty);
 				}
 			}
 			return true;

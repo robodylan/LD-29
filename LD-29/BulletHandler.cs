@@ -25,7 +25,10 @@ namespace LD_29
 
 		public void Add(float x, float y, float rad)
 		{
-			Bullets.Add(new Bullet(x, y, rad));
+			Bullet b = new Bullet(x, y, rad);
+			b.OnBreak += Break;
+			b.OnHit += Hit;
+			Bullets.Add(b);
 		}
 
 		public void Draw(RenderWindow window)
