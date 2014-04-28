@@ -167,7 +167,7 @@ namespace LD_29.Level
 			return new Vector2f(v.X * 128 * Global.Scale, v.Y * 128 * Global.Scale) + Global.Offset;
 		}
 
-		public void Draw(RenderWindow r)
+		public void Draw(RenderTarget r)
 		{
 			/*foreach (Block b in blocks)
 			{

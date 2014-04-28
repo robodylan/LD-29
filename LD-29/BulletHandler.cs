@@ -31,7 +31,7 @@ namespace LD_29
 			Bullets.Add(b);
 		}
 
-		public void Draw(RenderWindow window)
+		public void Draw(RenderTarget window)
 		{
 			for (int i = Bullets.Count - 1; i >= 0; i--)
 			{

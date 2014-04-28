@@ -43,6 +43,8 @@ namespace LD_29
 		private OffsetSprite raycpoint;
 		private int Width, Height;
 
+		private Sprite glowDisplay;
+
 		private Font defaultFont;
 
 		public bool grappled { get; set; }
@@ -63,6 +65,10 @@ namespace LD_29
 
 		private Vector2 velocityOld;
 
+		private RenderTexture glowMap;
+		private RenderTexture glowMap2;
+		private RenderTexture post;
+
 		private Music music;
 
 		private bool shooting;
@@ -77,6 +83,18 @@ namespace LD_29
 		/// Internal title
 		/// </summary>
 		private string title;
+
+		private RenderStates blurShaderHorizontal;
+
+		private Shader blurHorizontal;
+
+		private RenderStates blurShaderVertical;
+
+		private Shader blurVertical;
+
+		private RenderStates finalShader;
+
+		private Shader final;
 
 		public bool[] Keys;
 
@@ -113,6 +131,31 @@ namespace LD_29
 		/// </summary>
 		public void Load()
 		{
+			// Create Post Process
+			glowMap = new RenderTexture(window.Size.X, window.Size.Y);
+			glowMap2 = new RenderTexture(window.Size.X, window.Size.Y);
+			post = new RenderTexture(window.Size.X, window.Size.Y);
+			glowDisplay = new Sprite();
+			glowDisplay.TextureRect = new IntRect(0, 0, (int)window.Size.X, (int)window.Size.Y);
+
+			blurHorizontal = new Shader("Content/default.vs", "Content/blurh.fs");
+			blurHorizontal.SetParameter("texelSize", new Vector2f(1 / (float)window.Size.X, 1 / (float)window.Size.Y));
+
+			blurShaderHorizontal = new RenderStates(RenderStates.Default);
+			blurShaderHorizontal.Shader = blurHorizontal;
+
+			blurVertical = new Shader("Content/default.vs", "Content/blurv.fs");
+			blurVertical.SetParameter("texelSize", new Vector2f(1 / (float)window.Size.X, 1 / (float)window.Size.Y));
+
+			blurShaderVertical = new RenderStates(RenderStates.Default);
+			blurShaderVertical.Shader = blurVertical;
+
+			final = new Shader("Content/default.vs", "Content/final.fs");
+			final.SetParameter("texelSize", new Vector2f(1 / (float)window.Size.X, 1 / (float)window.Size.Y));
+
+			finalShader = new RenderStates(RenderStates.Default);
+			finalShader.Shader = final;
+
 			// Load Level
 			testlevel = LevelLoader.LoadLevel("Level" + Score + "/");
 			Score += 1;
@@ -171,7 +214,7 @@ namespace LD_29
 			window.MouseButtonReleased += window_MouseButtonReleased;
 			window.Closed += window_Closed;
 
-			window.SetFramerateLimit(120);
+			window.SetFramerateLimit(60);
 
 			Load();
 
@@ -184,7 +227,10 @@ namespace LD_29
 				// Update all
 				Update();
 
-				window.Clear(new Color(0, 0, 0));
+				window.Clear(Color.Black);
+				post.Clear(Color.Black);
+				glowMap.Clear(Color.Black);
+				glowMap2.Clear(Color.Black);
 
 				// Draw Content
 				Draw();
@@ -286,7 +332,8 @@ namespace LD_29
 				character.Body.LinearVelocity += new Vector2(0, -1.0f);
 			if (character.Body.LinearVelocity == velocityOld) OnGround = true;
 			velocityOld = character.Body.LinearVelocity;
-			rota += 0.001f;
+
+			//rota += 0.001f;
 
 			canShoot--;
 			canShoot = canShoot < 0 ? 0 : canShoot;
@@ -316,8 +363,7 @@ namespace LD_29
 		public void Draw()
 		{
 			Vector2 old = new Vector2();
-			bool blue = false;
-			for (int i = 0; i <= 360; i += 6)
+			for (int i = 0; i <= 360; i += 12)
 			{
 				Vector2 r = RayCast(50, i * 0.0174532925f + rota);
 				if (old.X == 0 && old.Y == 0)
@@ -329,17 +375,18 @@ namespace LD_29
 				Vector2f off = new Vector2f(32, 0);
 				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - off;
 				line[1].Position = Offset(to2f(r)) - off;
+				line[0].Color = new Color(0, 60, 70);
+				line[1].Color = new Color(0, 30, 35);
+				post.Draw(line, PrimitiveType.Lines);
+				line[0].Color = Color.White;
+				line[1].Color = Color.White;
+				line[2].Color = Color.White;
 				line[2].Position = Offset(to2f(old)) - off;
-				Color c = blue ? new Color(0, 60, 70) : new Color(0, 90, 100);
-				line[0].Color = c;
-				line[1].Color = c;
-				line[2].Color = c;
-				window.Draw(line, PrimitiveType.Triangles);
-				blue = !blue;
+				glowMap.Draw(line, PrimitiveType.Triangles);
 				old = r;
 			}
 
-			testlevel.Draw(window);
+			testlevel.Draw(post);
 
 			if (grappled)
 			{
@@ -347,14 +394,22 @@ namespace LD_29
 				line[1].Position = Offset(to2f(grapBody.Position)) - new Vector2f(32, 0);
 				line[0].Color = new Color(100, 100, 100);
 				line[1].Color = new Color(100, 100, 100);
-				window.Draw(line, PrimitiveType.Lines);
+				post.Draw(line, PrimitiveType.Lines);
 			}
 
 			//Main Character;
 			Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2 - 64, Player.CameraY + window.Size.Y / 2 - 32);
-			window.Draw(Char);
+			post.Draw(Char);
 
-			bullets.Draw(window);
+			bullets.Draw(post);
+			glowDisplay.Texture = glowMap.Texture;
+			glowMap2.Draw(glowDisplay, blurShaderHorizontal);
+			glowDisplay.Texture = glowMap2.Texture;
+			glowMap.Draw(glowDisplay, blurShaderVertical);
+			glowDisplay.Texture = glowMap.Texture;
+			finalShader.Shader.SetParameter("glow", glowDisplay.Texture);
+			finalShader.Shader.SetParameter("texture", post.Texture);
+			window.Draw(glowDisplay, finalShader);
 		}
 
 		public Vector2f to2f(Vector2 v)
