@@ -212,6 +212,7 @@ namespace LD_29
 			window.KeyReleased += window_KeyReleased;
 			window.MouseButtonPressed += window_MouseButtonPressed;
 			window.MouseButtonReleased += window_MouseButtonReleased;
+			window.MouseWheelMoved += window_MouseWheelMoved;
 			window.Closed += window_Closed;
 
 			window.SetFramerateLimit(60);
@@ -237,6 +238,14 @@ namespace LD_29
 
 				// Bring drawn to user
 				window.Display();
+			}
+		}
+
+		private void window_MouseWheelMoved(object sender, MouseWheelEventArgs e)
+		{
+			if (grappled)
+			{
+				graplingJoint.MaxLength += e.Delta * 0.1f;
 			}
 		}
 
