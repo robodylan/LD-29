@@ -12,9 +12,15 @@ namespace LD_29
 {
     public partial class Launcher : Form
     {
+
         public Launcher()
         {
             InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            using (Game game = new Game("One Who Shall Not Be Named Yet")) game.Start(/* Game Args */);
         }
     }
 }

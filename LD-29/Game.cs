@@ -5,10 +5,6 @@ using FarseerPhysics.Factories;
 using LD_29.Level;
 using Microsoft.Xna.Framework;
 
-//Import SFML
-using SFML.Audio;
-using SFML.Graphics;
-using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,6 +13,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+//Import SFML
+using SFML.Audio;
+using SFML.Graphics;
+using SFML.Window;
 
 namespace LD_29
 {
@@ -46,7 +46,6 @@ namespace LD_29
 		private int Width, Height;
 
 		public bool grappled { get; set; }
-
 		private RopeJoint graplingJoint { get; set; }
 
 		private Body grapBody = null;
@@ -102,7 +101,7 @@ namespace LD_29
 			testlevel = LevelLoader.LoadLevel("Level" + Score + "/");
 			Score += 1;
 			testlevel.ComputePhysics();
-			character = new CapsuleShape(0.01f, 0.75f, new PhysicsParams() { Static = false, Density = 20.0f, X = 6, Y = 56, IsSleeping = false, FixedRotation = true, Friction = 0.5f });
+			character = new CapsuleShape(0.01f, 0.2f, new PhysicsParams() { Static = false, Density = 20.0f, X = 6, Y = 56, IsSleeping = false, FixedRotation = true, Friction = 0.5f });
 			tex = new Texture("Content/character.png");
 			spr = new PhysicsSprite(character.Body, character.Width, character.Height);
 			raycpoint = new OffsetSprite(10, 10);
@@ -135,7 +134,7 @@ namespace LD_29
 			window.MouseButtonReleased += window_MouseButtonReleased;
 			window.Closed += window_Closed;
 
-			window.SetFramerateLimit(60);
+			window.SetFramerateLimit(120);
 
 			Load();
 
@@ -148,7 +147,7 @@ namespace LD_29
 				// Update all
 				Update();
 
-				window.Clear(new SFML.Graphics.Color(25, 165, 190));
+				window.Clear(new SFML.Graphics.Color(0,0,0));
 
 				// Draw Content
 				Draw();
@@ -245,9 +244,8 @@ namespace LD_29
 
 		public void Draw()
 		{
-<<<<<<< HEAD
-			Vector2f old = new Vector2f();
-				for (int i = 0; i <= 360; i += 4)
+			//Vector2f old = new Vector2f();
+				for (int i = 0; i <= 360; i += 10)
  				{
  					//Vector2 r = RayCast(50, -1.57079632679f);
  					Vector2 r = RayCast(50, i * 0.0174532925f);
@@ -267,35 +265,8 @@ namespace LD_29
                     Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2 - 64, Player.CameraY + window.Size.Y / 2 - 32);
                     window.Draw(Char);
  				}
-
-=======
-			Vector2 old = new Vector2();
-			bool blue = false;
-			for (int i = 0; i <= 360; i += 6)
-			{
-				//Vector2 r = RayCast(50, -1.57079632679f);
-				Vector2 r = RayCast(50, i * 0.0174532925f + rota);
-				if (old.X == 0 && old.Y == 0)
-				{
-					old = r;
-					continue;
-				}
-				raycpoint.Position = to2f(r);
-				Vector2f off = new Vector2f(32, 0);
-				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - off;
-				line[1].Position = Offset(to2f(r)) - off;
-				line[2].Position = Offset(to2f(old)) - off;
-				SFML.Graphics.Color c = blue ? new SFML.Graphics.Color(0, 60, 70) : new SFML.Graphics.Color(0, 90, 100);
-				line[0].Color = c;
-				line[1].Color = c;
-				line[2].Color = c;
-				window.Draw(line, PrimitiveType.Triangles);
-				blue = !blue;
-				old = r;
-			}
 			Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2 - 70, Player.CameraY + window.Size.Y / 2 - 30);
 			window.Draw(Char);
->>>>>>> b547c35f6dcc11b8afdde46c1bb2643323e64d50
 		}
 
 		public Vector2f to2f(Vector2 v)

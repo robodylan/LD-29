@@ -6,15 +6,18 @@ using System.Windows.Forms;
 
 namespace LD_29
 {
-	public class Program
+	public static class Program
 	{
+        public static Launcher l = new Launcher();
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
-		[STAThread]
+        [STAThread]
 		private static void Main()
 		{
-			using (Game game = new Game("One Who Shall Not Be Named Yet")) game.Start(/* Game Args */);
+            l.ShowDialog();
+            l.Close();
+            new Bullet(0,0);
 		}
 	}
 }
