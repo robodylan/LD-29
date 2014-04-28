@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="BoxShape.cs" />
     <Compile Include="Bullet.cs" />
+    <Compile Include="BulletHandler.cs" />
     <Compile Include="CapsuleShape.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Global.cs" />

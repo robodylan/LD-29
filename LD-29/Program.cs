@@ -8,15 +8,16 @@ namespace LD_29
 {
 	public static class Program
 	{
-        public static Launcher l = new Launcher();
+		public static Launcher l = new Launcher();
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
-        [STAThread]
+		[STAThread]
 		private static void Main()
 		{
-            l.ShowDialog();
-            l.Close();
+			Application.EnableVisualStyles();
+			l.ShowDialog();
 		}
 	}
 }

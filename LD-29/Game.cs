@@ -5,6 +5,10 @@ using FarseerPhysics.Factories;
 using LD_29.Level;
 using Microsoft.Xna.Framework;
 
+//Import SFML
+using SFML.Audio;
+using SFML.Graphics;
+using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,10 +17,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-//Import SFML
-using SFML.Audio;
-using SFML.Graphics;
-using SFML.Window;
 
 namespace LD_29
 {
@@ -46,14 +46,14 @@ namespace LD_29
 		private int Width, Height;
 
 		public bool grappled { get; set; }
+
 		private RopeJoint graplingJoint { get; set; }
 
 		private Body grapBody = null;
 
 		private CapsuleShape character;
 
-        //Bullet Variables
-        private CapsuleShape bullet;
+		private BulletHandler bullets;
 
 		private Level.Level testlevel;
 
@@ -63,11 +63,15 @@ namespace LD_29
 
 		private Vector2 velocityOld;
 
-        Music music = new Music("Content/BackgroundMusic.wav");
+		private Music music;
+
+		private bool shooting;
 
 		private Vertex[] line;
 
 		private float rota = 0;
+
+		private int canShoot = 0;
 
 		/// <summary>
 		/// Internal title
@@ -91,11 +95,17 @@ namespace LD_29
 		/// </summary>
 		public RenderWindow window;
 
-		public Game(string Title)
+		private float vol;
+
+		private bool Sound;
+
+		public Game(string Title, bool sound, float volume)
 		{
 			screen = Screen.PrimaryScreen.Bounds;
 			title = Title;
 			Keys = new bool[256];
+			Sound = sound;
+			vol = volume;
 		}
 
 		/// <summary>
@@ -103,12 +113,14 @@ namespace LD_29
 		/// </summary>
 		public void Load()
 		{
-            //Load Level
+			// Load Level
 			testlevel = LevelLoader.LoadLevel("Level" + Score + "/");
 			Score += 1;
-            //Load Physics
+
+			// Load Physics
 			testlevel.ComputePhysics();
-            //Load Character
+
+			// Load Character
 			character = new CapsuleShape(0.01f, 0.2f, new PhysicsParams() { Static = false, Density = 20.0f, X = 6, Y = 56, IsSleeping = false, FixedRotation = true, Friction = 0.5f });
 			tex = new Texture("Content/character.png");
 			spr = new PhysicsSprite(character.Body, character.Width, character.Height);
@@ -120,15 +132,25 @@ namespace LD_29
 			spr.Scale = new Vector2f(Global.Scale * 3, Global.Scale * 3);
 			spr.Offset = new Vector2f(32, -64 - 128) * Global.Scale;
 			player = new Player();
+
 			line = new Vertex[3];
+
 			line[0] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
 			line[1] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
 			line[2] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
-            //Load Bullets
-            bullet = new CapsuleShape(0.01f, 0.01f, new PhysicsParams() { Static = false,Density = 20.0f, Bullet.X, Bullet.Y, IsSleeping = false, FixedRotation = false, Friction = 0.5f });
-            //Load Music
-            music.Loop = true;
-            music.Play();
+
+			if (Sound)
+			{
+				// Load Music
+				music = new Music("Content/BackgroundMusic.wav");
+				music.Loop = true;
+				music.Volume = vol;
+				music.Play();
+			}
+
+			// Bullets
+			shooting = false;
+			bullets = new BulletHandler();
 		}
 
 		/// <summary>
@@ -160,7 +182,7 @@ namespace LD_29
 				// Update all
 				Update();
 
-				window.Clear(new SFML.Graphics.Color(0,0,0));
+				window.Clear(new SFML.Graphics.Color(0, 0, 0));
 
 				// Draw Content
 				Draw();
@@ -172,19 +194,27 @@ namespace LD_29
 
 		private void window_MouseButtonReleased(object sender, MouseButtonEventArgs e)
 		{
-			if (grappled)
+			if (grappled && e.Button == Mouse.Button.Right)
 			{
 				grapBody.Dispose();
 				graplingJoint.Enabled = false;
 				grappled = false;
 			}
+			if (e.Button == Mouse.Button.Left)
+			{
+				shooting = false;
+			}
 		}
 
 		private void window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
 		{
-			if (!grappled)
+			if (!grappled && e.Button == Mouse.Button.Right)
 			{
 				grappled = Graple();
+			}
+			if (e.Button == Mouse.Button.Left)
+			{
+				shooting = true;
 			}
 		}
 
@@ -217,7 +247,7 @@ namespace LD_29
 			PhysConfig.world.Step(1 / 60.0f);
 			Global.Offset = -new Vector2f(character.Body.Position.X * spr.Texture.Size.X * Global.Scale - Width * 0.5f, character.Body.Position.Y * spr.Texture.Size.Y * Global.Scale - Height * 0.5f);
 
-			OnGround = RayCastDistance(10, 0) <= 0.18f || RayCastDistance(10, 0.3f) <= 0.3f || RayCastDistance(10, 5.9f) <= 0.3f;
+			OnGround = RayCastDistance(10, 0) <= 0.07f || RayCastDistance(10, 0.1f) <= 0.1f || RayCastDistance(10, 6.1f) <= 0.1f;
 
 			if (OnGround)
 			{
@@ -231,7 +261,7 @@ namespace LD_29
 				}
 				if (IsKeyDown(Keyboard.Key.Space))
 				{
-					character.Body.LinearVelocity = new Vector2(character.Body.LinearVelocity.X, -5.0f);
+					character.Body.LinearVelocity = new Vector2(character.Body.LinearVelocity.X, -8.0f);
 				}
 			}
 			else
@@ -244,10 +274,36 @@ namespace LD_29
 				{
 					character.Body.LinearVelocity -= new Vector2(0.05f, 0.0f);
 				}
+				if (IsKeyDown(Keyboard.Key.Space))
+				{
+					character.Body.LinearVelocity += new Vector2(0, -0.01f);
+				}
 			}
+
+			if (!OnGround && character.Body.LinearVelocity.X == 0 && character.Body.LinearVelocity.Y == 0)
+				character.Body.LinearVelocity += new Vector2(0, -1.0f);
 			if (character.Body.LinearVelocity == velocityOld) OnGround = true;
 			velocityOld = character.Body.LinearVelocity;
 			rota += 0.001f;
+
+			canShoot--;
+			canShoot = canShoot < 0 ? 0 : canShoot;
+			if (shooting)
+			{
+				if (canShoot == 0)
+				{
+					Shoot();
+					canShoot = 10;
+				}
+			}
+		}
+
+		public void Shoot()
+		{
+			Vector2f pos1 = Offset(to2f(character.Body.Position));
+			Vector2i pos2 = Mouse.GetPosition(window) + new Vector2i(32, 0);
+			float rad = (float)Math.Atan2(pos2.X - pos1.X, pos2.Y - pos1.Y);
+			bullets.Add(character.Body.Position.X, character.Body.Position.Y, rad);
 		}
 
 		/// <summary>
@@ -257,29 +313,44 @@ namespace LD_29
 
 		public void Draw()
 		{
-			//Vector2f old = new Vector2f();
-				for (int i = 0; i <= 360; i += 10)
- 				{
- 					//Vector2 r = RayCast(50, -1.57079632679f);
- 					Vector2 r = RayCast(50, i * 0.0174532925f);
- 					raycpoint.Position = new Vector2f(r.X, r.Y);
- 					raycpoint.DrawTransformed(window, RenderStates.Default);
- 					line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset;
- 					line[1].Position = Offset(new Vector2f(r.X, r.Y));
-			        Vector2f off = new Vector2f(32, 0);
-				    line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - off;
-				    line[1].Position = Offset(new Vector2f(r.X, r.Y)) - off;
- 					line[0].Color = SFML.Graphics.Color.Blue;
- 					line[1].Color = SFML.Graphics.Color.Black;
- 					Console.WriteLine(line[0].Position);
- 					Console.WriteLine(line[1].Position);
- 					window.Draw(line, PrimitiveType.Lines);
-                    //Main Character;
-                    Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2 - 64, Player.CameraY + window.Size.Y / 2 - 32);
-                    window.Draw(Char);
- 				}
-			Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2 - 70, Player.CameraY + window.Size.Y / 2 - 30);
+			Vector2 old = new Vector2();
+			bool blue = false;
+			for (int i = 0; i <= 360; i += 6)
+			{
+				Vector2 r = RayCast(50, i * 0.0174532925f + rota);
+				if (old.X == 0 && old.Y == 0)
+				{
+					old = r;
+					continue;
+				}
+				raycpoint.Position = to2f(r);
+				Vector2f off = new Vector2f(32, 0);
+				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - off;
+				line[1].Position = Offset(to2f(r)) - off;
+				line[2].Position = Offset(to2f(old)) - off;
+				SFML.Graphics.Color c = blue ? new SFML.Graphics.Color(0, 60, 70) : new SFML.Graphics.Color(0, 90, 100);
+				line[0].Color = c;
+				line[1].Color = c;
+				line[2].Color = c;
+				window.Draw(line, PrimitiveType.Triangles);
+				blue = !blue;
+				old = r;
+			}
+
+			if (grappled)
+			{
+				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - new Vector2f(32, 0);
+				line[1].Position = Offset(to2f(grapBody.Position)) - new Vector2f(32, 0);
+				line[0].Color = new SFML.Graphics.Color(100, 100, 100);
+				line[1].Color = new SFML.Graphics.Color(100, 100, 100);
+				window.Draw(line, PrimitiveType.Lines);
+			}
+
+			//Main Character;
+			Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2 - 64, Player.CameraY + window.Size.Y / 2 - 32);
 			window.Draw(Char);
+
+			bullets.Draw(window);
 		}
 
 		public Vector2f to2f(Vector2 v)
@@ -303,6 +374,8 @@ namespace LD_29
 			{
 				foreach (Fixture f in b.FixtureList)
 				{
+					if (f.CollisionCategories == Category.Cat16)
+						continue;
 					RayCastOutput output;
 					if (!f.RayCast(out output, ref input, 0))
 						continue;
@@ -312,7 +385,7 @@ namespace LD_29
 					}
 				}
 			}
-			return input.Point1 + closestFraction * (input.Point2 - input.Point1) * 1.5f;
+			return input.Point1 + closestFraction * (input.Point2 - input.Point1);
 		}
 
 		public bool Graple()
@@ -320,14 +393,14 @@ namespace LD_29
 			Vector2f pos1 = Offset(to2f(character.Body.Position));
 			Vector2i pos2 = Mouse.GetPosition(window) + new Vector2i(32, 0);
 			float rad = (float)Math.Atan2(pos2.X - pos1.X, pos2.Y - pos1.Y);
-			Vector2 ray = RayCast(10, rad);
-			float len = RayCastDistance(10, rad);
-			if (len < 900)
+			Vector2 ray = RayCast(25, rad);
+			float len = RayCastDistance(25, rad);
+			if (len < 1)
 			{
 				grapBody = BodyFactory.CreateCircle(PhysConfig.world, 0.1f, 0.0f, ray);
 				grapBody.IsStatic = true;
 				graplingJoint = new RopeJoint(character.Body, grapBody, new Vector2(), new Vector2());
-				graplingJoint.MaxLength = len * 16;
+				graplingJoint.MaxLength = len * 24.8f;
 				PhysConfig.world.AddJoint(graplingJoint);
 				return true;
 			}
@@ -345,6 +418,8 @@ namespace LD_29
 			{
 				foreach (Fixture f in b.FixtureList)
 				{
+					if (f.CollisionCategories == Category.Cat16)
+						continue;
 					RayCastOutput output;
 					if (!f.RayCast(out output, ref input, 0))
 						continue;

@@ -5,22 +5,33 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LD_29
 {
-    public partial class Launcher : Form
-    {
+	public partial class Launcher : Form
+	{
+		public Launcher()
+		{
+			InitializeComponent();
+		}
 
-        public Launcher()
-        {
-            InitializeComponent();
-        }
+		private void button1_Click(object sender, EventArgs e)
+		{
+			bool soundEnabled = SoundBox.Checked;
+			float vol = (float)trackBar1.Value;
+			new Thread(() =>
+			{
+				using (Game game = new Game("One Who Shall Not Be Named Yet", soundEnabled, vol)) game.Start();
+			}).Start();
+			Close();
+		}
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            using (Game game = new Game("One Who Shall Not Be Named Yet")) game.Start(/* Game Args */);
-        }
-    }
+		private void trackBar1_Scroll(object sender, EventArgs e)
+		{
+			SoundBox.Text = "Sound (" + trackBar1.Value + "%)";
+		}
+	}
 }

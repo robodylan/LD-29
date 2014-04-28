@@ -119,7 +119,8 @@ namespace LD_29.Level
 
 			foreach (Block b in physBlocks)
 			{
-				new BoxShape(0.5f, 0.5f, new PhysicsParams() { Static = true, X = b.Position.X + 0.5f, Y = b.Position.Y, Ghost = b.ID == Block.Coin, Friction = 0.8f });
+				BoxShape bx = new BoxShape(0.5f, 0.5f, new PhysicsParams() { Static = true, X = b.Position.X + 0.5f, Y = b.Position.Y, Ghost = b.ID == Block.Coin, Friction = 0.8f });
+				bx.Body.CollisionCategories = Category.Cat14;
 			}
 			Console.WriteLine("Done in " + StopTime().ToString() + "!");
 		}
