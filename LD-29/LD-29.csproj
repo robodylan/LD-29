@@ -71,7 +71,6 @@
     <Compile Include="Bullet.cs" />
     <Compile Include="BulletHandler.cs" />
     <Compile Include="CapsuleShape.cs" />
-    <Compile Include="EnemyHandler.cs" />
     <Compile Include="FixtureEvent.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Global.cs" />
@@ -83,6 +82,8 @@
     </Compile>
     <Compile Include="Level\Block.cs" />
     <Compile Include="Level\Coin.cs" />
+    <Compile Include="Level\Enemy.cs" />
+    <Compile Include="Level\EnemyHandler.cs" />
     <Compile Include="Level\JSONDescription.cs" />
     <Compile Include="Level\JSONEntity.cs" />
     <Compile Include="Level\JSONVector.cs" />

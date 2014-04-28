@@ -29,8 +29,9 @@ namespace LD_29.Level
 		private Stopwatch sw;
 		private Vector2f BlockOffset;
 		private List<Coin> Coins;
+		private EnemyHandler enemies;
 
-		public Level(int width, int height, List<Block> blocks, List<Block> topLayer, List<Block> bottomLayer, Position start, Position finish, Position secret, bool hasSecret, float scale, string name, int next, int snext)
+		public Level(int width, int height, List<Block> blocks, List<Block> topLayer, List<Block> bottomLayer, Position start, Position finish, Position secret, bool hasSecret, float scale, string name, int next, int snext, EnemyHandler e)
 		{
 			this.width = width;
 			this.height = height;
@@ -49,6 +50,7 @@ namespace LD_29.Level
 			scale *= 0.5f;
 			this.scale = scale;
 			Global.Scale = scale;
+			enemies = e;
 
 			block = new Texture("Content/block.png");
 			block.Smooth = true;
@@ -154,8 +156,10 @@ namespace LD_29.Level
 			Console.WriteLine("Done in " + StopTime().ToString() + "!");
 		}
 
-		public void SpawnEntity(int type, Position p)
+		public void SpawnEntity(Position p)
 		{
+			Console.WriteLine("Spawning on at " + p.X + " " + p.Y);
+			enemies.Add(p.X, p.Y);
 		}
 
 		public void AddEntitySpawner(int type, Position p, Position defaultVelocity)

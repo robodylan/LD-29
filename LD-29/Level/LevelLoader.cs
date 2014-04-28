@@ -29,7 +29,7 @@ namespace LD_29.Level
 			return 1;
 		}
 
-		public static Level LoadLevel(string path)
+		public static Level LoadLevel(string path, EnemyHandler e)
 		{
 			JSONDescription d = JsonConvert.DeserializeObject<JSONDescription>(File.ReadAllText("Content/Levels/" + path + "level.json"));
 			string name = d.Name;
@@ -52,13 +52,15 @@ namespace LD_29.Level
 					block.Add(new Block() { Position = new Position() { X = x, Y = y }, ID = GetBlockID(color) });
 			});
 
-			Level l = new Level(cmap.Width, cmap.Height, block, above, below, start, finish, secret, hasSecret, scale, name, next, snext);
+			Level l = new Level(cmap.Width, cmap.Height, block, above, below, start, finish, secret, hasSecret, scale, name, next, snext, e);
 			cmap.HandlePixels((x, y, color) =>
 			{
 				if (color.R == 255 && color.G == 255 && color.B == 0)
 					l.AddCoin(x, y, false);
 				if (color.R == 0 && color.G == 255 && color.B == 255)
 					l.AddCoin(x, y, true);
+				if (color.R == 0 && color.G == 255 && color.B == 0)
+					l.SpawnEntity(new Position() { X = x, Y = y });
 			});
 
 			return l;

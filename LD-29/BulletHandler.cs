@@ -47,7 +47,8 @@ namespace LD_29
 
 		private void Hit(object bullet, Fixture fix)
 		{
-			OnHit(bullet, fix);
+			if (OnHit != null)
+				OnHit(bullet, fix);
 			Remove((Bullet)bullet);
 		}
 

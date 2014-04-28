@@ -96,6 +96,8 @@ namespace LD_29
 
 		private Shader final;
 
+		private EnemyHandler enemies;
+
 		public bool[] Keys;
 
 		/// <summary>
@@ -157,7 +159,11 @@ namespace LD_29
 			finalShader.Shader = final;
 
 			// Load Level
-			testlevel = LevelLoader.LoadLevel("Level" + Score + "/");
+			enemies = new EnemyHandler();
+			enemies.OnHit += (s, e) => { Console.WriteLine("Au"); };
+			enemies.OnDead += (s, e) => { Console.WriteLine("Ded"); };
+
+			testlevel = LevelLoader.LoadLevel("Level" + Score + "/", enemies);
 			Score += 1;
 
 			// Load Physics
@@ -405,6 +411,8 @@ namespace LD_29
 				line[1].Color = new Color(100, 100, 100);
 				post.Draw(line, PrimitiveType.Lines);
 			}
+
+			enemies.Draw(post);
 
 			//Main Character;
 			Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2 - 64, Player.CameraY + window.Size.Y / 2 - 32);
