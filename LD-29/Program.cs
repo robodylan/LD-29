@@ -17,7 +17,6 @@ namespace LD_29
 		{
             l.ShowDialog();
             l.Close();
-            new Bullet(0,0);
 		}
 	}
 }

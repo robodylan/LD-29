@@ -52,6 +52,9 @@ namespace LD_29
 
 		private CapsuleShape character;
 
+        //Bullet Variables
+        private CapsuleShape bullet;
+
 		private Level.Level testlevel;
 
 		private Player player;
@@ -59,6 +62,8 @@ namespace LD_29
 		private bool OnGround = false;
 
 		private Vector2 velocityOld;
+
+        Music music = new Music("Content/BackgroundMusic.wav");
 
 		private Vertex[] line;
 
@@ -98,9 +103,12 @@ namespace LD_29
 		/// </summary>
 		public void Load()
 		{
+            //Load Level
 			testlevel = LevelLoader.LoadLevel("Level" + Score + "/");
 			Score += 1;
+            //Load Physics
 			testlevel.ComputePhysics();
+            //Load Character
 			character = new CapsuleShape(0.01f, 0.2f, new PhysicsParams() { Static = false, Density = 20.0f, X = 6, Y = 56, IsSleeping = false, FixedRotation = true, Friction = 0.5f });
 			tex = new Texture("Content/character.png");
 			spr = new PhysicsSprite(character.Body, character.Width, character.Height);
@@ -116,6 +124,11 @@ namespace LD_29
 			line[0] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
 			line[1] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
 			line[2] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
+            //Load Bullets
+            bullet = new CapsuleShape(0.01f, 0.01f, new PhysicsParams() { Static = false,Density = 20.0f, Bullet.X, Bullet.Y, IsSleeping = false, FixedRotation = false, Friction = 0.5f });
+            //Load Music
+            music.Loop = true;
+            music.Play();
 		}
 
 		/// <summary>
