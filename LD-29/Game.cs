@@ -12,10 +12,8 @@ using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LD_29
@@ -44,6 +42,8 @@ namespace LD_29
 		private PhysicsSprite spr;
 		private OffsetSprite raycpoint;
 		private int Width, Height;
+
+		private Font defaultFont;
 
 		public bool grappled { get; set; }
 
@@ -88,7 +88,7 @@ namespace LD_29
 		/// <summary>
 		/// Set Screen Boundries
 		/// </summary>
-		private Rectangle screen;
+		private System.Drawing.Rectangle screen;
 
 		/// <summary>
 		/// Handle to a window
@@ -122,6 +122,7 @@ namespace LD_29
 
 			// Load Character
 			character = new CapsuleShape(0.01f, 0.2f, new PhysicsParams() { Static = false, Density = 20.0f, X = 6, Y = 56, IsSleeping = false, FixedRotation = true, Friction = 0.5f });
+			character.Body.CollisionCategories = Category.Cat2;
 			tex = new Texture("Content/character.png");
 			spr = new PhysicsSprite(character.Body, character.Width, character.Height);
 			raycpoint = new OffsetSprite(10, 10);
@@ -132,12 +133,13 @@ namespace LD_29
 			spr.Scale = new Vector2f(Global.Scale * 3, Global.Scale * 3);
 			spr.Offset = new Vector2f(32, -64 - 128) * Global.Scale;
 			player = new Player();
+			defaultFont = new Font("Content/consolas.ttf");
 
 			line = new Vertex[3];
 
-			line[0] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
-			line[1] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
-			line[2] = new Vertex(new Vector2f(), SFML.Graphics.Color.White);
+			line[0] = new Vertex(new Vector2f(), Color.White);
+			line[1] = new Vertex(new Vector2f(), Color.White);
+			line[2] = new Vertex(new Vector2f(), Color.White);
 
 			if (Sound)
 			{
@@ -182,7 +184,7 @@ namespace LD_29
 				// Update all
 				Update();
 
-				window.Clear(new SFML.Graphics.Color(0, 0, 0));
+				window.Clear(new Color(0, 0, 0));
 
 				// Draw Content
 				Draw();
@@ -328,7 +330,7 @@ namespace LD_29
 				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - off;
 				line[1].Position = Offset(to2f(r)) - off;
 				line[2].Position = Offset(to2f(old)) - off;
-				SFML.Graphics.Color c = blue ? new SFML.Graphics.Color(0, 60, 70) : new SFML.Graphics.Color(0, 90, 100);
+				Color c = blue ? new Color(0, 60, 70) : new Color(0, 90, 100);
 				line[0].Color = c;
 				line[1].Color = c;
 				line[2].Color = c;
@@ -337,12 +339,14 @@ namespace LD_29
 				old = r;
 			}
 
+			testlevel.Draw(window);
+
 			if (grappled)
 			{
 				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - new Vector2f(32, 0);
 				line[1].Position = Offset(to2f(grapBody.Position)) - new Vector2f(32, 0);
-				line[0].Color = new SFML.Graphics.Color(100, 100, 100);
-				line[1].Color = new SFML.Graphics.Color(100, 100, 100);
+				line[0].Color = new Color(100, 100, 100);
+				line[1].Color = new Color(100, 100, 100);
 				window.Draw(line, PrimitiveType.Lines);
 			}
 
@@ -374,7 +378,7 @@ namespace LD_29
 			{
 				foreach (Fixture f in b.FixtureList)
 				{
-					if (f.CollisionCategories == Category.Cat16)
+					if (f.CollisionCategories == Category.Cat16 || f.CollisionCategories == Category.Cat25)
 						continue;
 					RayCastOutput output;
 					if (!f.RayCast(out output, ref input, 0))
@@ -418,7 +422,7 @@ namespace LD_29
 			{
 				foreach (Fixture f in b.FixtureList)
 				{
-					if (f.CollisionCategories == Category.Cat16)
+					if (f.CollisionCategories == Category.Cat16 || f.CollisionCategories == Category.Cat25)
 						continue;
 					RayCastOutput output;
 					if (!f.RayCast(out output, ref input, 0))

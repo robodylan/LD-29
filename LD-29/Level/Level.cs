@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LD_29.Level
@@ -15,7 +14,11 @@ namespace LD_29.Level
 	public class Level
 	{
 		private Texture block;
+		private Texture coin;
+		private Texture ruby;
 		private Sprite blockSprite;
+		private Sprite coinSprite;
+		private Sprite rubySprite;
 		private int width, height;
 		private List<Block> blocks, topLayer, bottomLayer, physBlocks;
 		private Position start, finish, secret;
@@ -25,6 +28,7 @@ namespace LD_29.Level
 		private int next, snext;
 		private Stopwatch sw;
 		private Vector2f BlockOffset;
+		private List<Coin> Coins;
 
 		public Level(int width, int height, List<Block> blocks, List<Block> topLayer, List<Block> bottomLayer, Position start, Position finish, Position secret, bool hasSecret, float scale, string name, int next, int snext)
 		{
@@ -45,12 +49,37 @@ namespace LD_29.Level
 			scale *= 0.5f;
 			this.scale = scale;
 			Global.Scale = scale;
+
 			block = new Texture("Content/block.png");
 			block.Smooth = true;
 			blockSprite = new Sprite();
 			blockSprite.Texture = block;
 			blockSprite.Scale = new SFML.Window.Vector2f(scale, scale);
+
+			coin = new Texture("Content/Coin.png");
+			coin.Smooth = true;
+			coinSprite = new Sprite();
+			coinSprite.Texture = coin;
+			coinSprite.Scale = new SFML.Window.Vector2f(scale * 0.5f, scale * 0.5f);
+
+			ruby = new Texture("Content/Ruby.png");
+			ruby.Smooth = true;
+			rubySprite = new Sprite();
+			rubySprite.Texture = ruby;
+			rubySprite.Scale = new SFML.Window.Vector2f(scale * 0.5f, scale * 0.5f);
+
 			sw = new Stopwatch();
+			Coins = new List<Coin>();
+		}
+
+		public void AddCoin(int x, int y, bool ruby)
+		{
+			Coin c = new Coin(x, y, ruby);
+			c.OnCollected += (s, e) =>
+			{
+				Coins.Remove((Coin)s);
+			};
+			Coins.Add(c);
 		}
 
 		public void SimplifyPhysics()
@@ -135,18 +164,35 @@ namespace LD_29.Level
 
 		public Vector2f Offset(Position v)
 		{
-			return new Vector2f(v.X * Global.Scale, v.Y * Global.Scale) + Global.Offset;
+			return new Vector2f(v.X * 128 * Global.Scale, v.Y * 128 * Global.Scale) + Global.Offset;
 		}
 
 		public void Draw(RenderWindow r)
 		{
-			foreach (Block b in blocks)
+			/*foreach (Block b in blocks)
 			{
-				Vector2f transformed = Offset(b.Position);
-				if (transformed.X < 0 || transformed.Y < 0 || transformed.X > 128 * scale + Global.GameResolution.X || transformed.Y > Global.GameResolution.Y)
-					return;
-				blockSprite.Position = new SFML.Window.Vector2f(b.Position.X * scale * block.Size.X, b.Position.Y * scale * block.Size.Y) + Global.Offset + BlockOffset * 64;
+				Vector2f transformed = Offset(b.Position) + BlockOffset * 64;
+				if (transformed.X < -128 * scale || transformed.Y < -128 * scale || transformed.X > 128 * scale + Global.GameResolution.X || transformed.Y > Global.GameResolution.Y)
+					continue;
+				blockSprite.Position = transformed;
 				r.Draw(blockSprite);
+			}*/
+			foreach (Coin c in Coins)
+			{
+				Vector2f transformed = Offset(c.Position) + BlockOffset * 64;
+
+				if (transformed.X < -128 * scale || transformed.Y < -128 * scale || transformed.X > 128 * scale + Global.GameResolution.X || transformed.Y > Global.GameResolution.Y)
+					continue;
+				if (c.Ruby)
+				{
+					rubySprite.Position = transformed;
+					r.Draw(rubySprite);
+				}
+				else
+				{
+					coinSprite.Position = transformed;
+					r.Draw(coinSprite);
+				}
 			}
 		}
 	}

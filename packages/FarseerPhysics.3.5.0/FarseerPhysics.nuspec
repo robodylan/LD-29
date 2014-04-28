@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>FarseerPhysics</id>
+    <version>3.5.0</version>
+    <authors>genbox</authors>
+    <owners>exDreamDuck</owners>
+    <licenseUrl>http://farseerphysics.codeplex.com/license</licenseUrl>
+    <projectUrl>http://farseerphysics.codeplex.com/</projectUrl>
+    <iconUrl>http://benjaminnitschke.com/Farseer128x128.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Farseer Physics Engine is a collision detection system with realistic physics responses.</description>
+    <releaseNotes>Release build for .NET 4.0 of version 3.5.0 changeset 102301 (2013-05-03)</releaseNotes>
+    <copyright>Copyright 2013</copyright>
+    <tags>Farseer Physics 2D</tags>
+  </metadata>
+</package>

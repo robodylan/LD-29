@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace LD_29
 {
@@ -14,5 +13,9 @@ namespace LD_29
 		public static Vector2f Offset = new Vector2f();
 
 		public static Vector2f GameResolution = new Vector2f();
+
+		public static int Coins = 0;
+
+		public static int Rubies = 0;
 	}
 }

@@ -12,7 +12,7 @@ namespace LD_29
 	{
 		public List<Bullet> Bullets;
 
-		public event EventHandler<Fixture> OnHit;
+		public event HitEventHandler OnHit;
 
 		private CircleShape shape;
 
