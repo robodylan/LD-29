@@ -17,14 +17,16 @@ namespace LD_29.Level
 
 		private Texture slimeTex;
 
-		private Sprite sprite;
+		private OffsetSprite sprite;
 
 		public EnemyHandler()
 		{
 			Enemies = new List<Enemy>();
 			slimeTex = new Texture("Content/Slime.png");
-			sprite = new Sprite(slimeTex);
-			sprite.Scale = new Vector2f(2, 2) * Global.Scale;
+			sprite = new OffsetSprite(128, 128);
+			sprite.Texture = slimeTex;
+			sprite.Scale = new Vector2f(0.5f, 0.5f) * Global.Scale;
+			sprite.Offset = new Vector2f(0, 64);
 		}
 
 		public void Add(float x, float y)
