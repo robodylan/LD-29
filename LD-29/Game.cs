@@ -36,8 +36,12 @@ namespace LD_29
 				title = value;
 			}
 		}
+        //GUI variables
+		public static int Score = 0;
+        public int TimeLeft = 6000;
+        public Text S;
+        public Text T;
 
-		public int Score = 0;
 		private Texture tex;
 		private PhysicsSprite spr;
 		private OffsetSprite raycpoint;
@@ -46,7 +50,6 @@ namespace LD_29
 		private Sprite glowDisplay;
 
 		private Font defaultFont;
-
 		public bool grappled { get; set; }
 
 		private RopeJoint graplingJoint { get; set; }
@@ -236,14 +239,19 @@ namespace LD_29
 
 				window.Clear(Color.Black);
 				post.Clear(Color.Black);
-				glowMap.Clear(Color.Black);
-				glowMap2.Clear(Color.Black);
+				//glowMap.Clear(Color.Blue);
+				//glowMap2.Clear(Color.Blue);
 
-				// Draw Content
+				//Draw Content
 				Draw();
+                ///Check For Lose
 
 				// Bring drawn to user
-				window.Display();
+				if(TimeLeft / 100 < 0){
+                    LoseScreen();
+                }else{
+                    window.Display();
+                }
 			}
 		}
 
@@ -316,11 +324,11 @@ namespace LD_29
 			{
 				if (IsKeyDown(Keyboard.Key.D))
 				{
-					character.Body.LinearVelocity += new Vector2(0.3f, 0.0f);
+					character.Body.LinearVelocity += new Vector2(.5f, 0.0f);
 				}
 				if (IsKeyDown(Keyboard.Key.A))
 				{
-					character.Body.LinearVelocity -= new Vector2(0.3f, 0.0f);
+					character.Body.LinearVelocity -= new Vector2(.5f, 0.0f);
 				}
 				if (IsKeyDown(Keyboard.Key.Space))
 				{
@@ -331,17 +339,19 @@ namespace LD_29
 			{
 				if (IsKeyDown(Keyboard.Key.D))
 				{
-					character.Body.LinearVelocity += new Vector2(0.05f, 0.0f);
+					character.Body.LinearVelocity += new Vector2(.2f, 0.0f);
 				}
 				if (IsKeyDown(Keyboard.Key.A))
 				{
-					character.Body.LinearVelocity -= new Vector2(0.05f, 0.0f);
+					character.Body.LinearVelocity -= new Vector2(.2f, 0.0f);
 				}
 				if (IsKeyDown(Keyboard.Key.Space))
 				{
-					character.Body.LinearVelocity += new Vector2(0, -0.01f);
+					character.Body.LinearVelocity += new Vector2(.2f, -0.01f);
 				}
 			}
+
+            character.Body.FixedRotation = false;
 
 			if (!OnGround && character.Body.LinearVelocity.X == 0 && character.Body.LinearVelocity.Y == 0)
 				character.Body.LinearVelocity += new Vector2(0, -1.0f);
@@ -360,8 +370,6 @@ namespace LD_29
 					canShoot = 10;
 				}
 			}
-            //Display Score
-            window.Draw(new Text("Hello",defaultFont));
 		}
 
 		public void Shoot()
@@ -392,12 +400,12 @@ namespace LD_29
 				Vector2f off = new Vector2f(32, 0);
 				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - off;
 				line[1].Position = Offset(to2f(r)) - off;
-				line[0].Color = new Color(0, 60, 70);
-				line[1].Color = new Color(0, 30, 35);
+				line[0].Color = new Color(0,0,200);
+				line[1].Color = new Color(0,0,0);
 				post.Draw(line, PrimitiveType.Lines);
 				line[0].Color = Color.White;
 				line[1].Color = Color.White;
-				line[2].Color = Color.White;
+				line[2].Color = Color.Black;
 				line[2].Position = Offset(to2f(old)) - off;
 				glowMap.Draw(line, PrimitiveType.Triangles);
 				old = r;
@@ -409,7 +417,7 @@ namespace LD_29
 			{
 				line[0].Position = new Vector2f(character.Body.Position.X * 128 * Global.Scale, (character.Body.Position.Y) * 128 * Global.Scale) + Global.Offset - new Vector2f(32, 0);
 				line[1].Position = Offset(to2f(grapBody.Position)) - new Vector2f(32, 0);
-				line[0].Color = new Color(100, 100, 100);
+				line[0].Color = new Color(255, 255, 255);
 				line[1].Color = new Color(100, 100, 100);
 				post.Draw(line, PrimitiveType.Lines);
 			}
@@ -419,7 +427,6 @@ namespace LD_29
 			//Main Character;
 			Char.Position = new Vector2f(Player.CameraX + window.Size.X / 2 - 64, Player.CameraY + window.Size.Y / 2 - 32);
 			post.Draw(Char);
-
 			bullets.Draw(post);
 			glowDisplay.Texture = glowMap.Texture;
 			glowMap2.Draw(glowDisplay, blurShaderHorizontal);
@@ -429,6 +436,22 @@ namespace LD_29
 			finalShader.Shader.SetParameter("glow", glowDisplay.Texture);
 			finalShader.Shader.SetParameter("texture", post.Texture);
 			window.Draw(glowDisplay, finalShader);
+            //Upadate Time
+            T = new Text("Time Left: 0", defaultFont, 50);
+            T.Color = new Color(255, 255, 255);
+            T.Position = new Vector2f(10,200);
+            TimeLeft -= 10;
+            T.DisplayedString = "Time Left: " + (TimeLeft / 100).ToString();
+            //Update Score
+            S = new Text("Score: 0", defaultFont, 50);
+            S.Color = new Color(255, 255, 255);
+            S.Position = new Vector2f(10, 100);
+            Score = Global.Coins + Global.Rubies;
+            S.DisplayedString = "Score: " + Score.ToString();
+            //
+            //Draw To GUI
+            window.Draw(T);
+            window.Draw(S);
 		}
 
 		public Vector2f to2f(Vector2 v)
@@ -523,5 +546,19 @@ namespace LD_29
 		public void Dispose()
 		{
 		}
+
+        public void LoseScreen()
+        {
+            S.Color = new Color(250,0,0);
+            S.Position = new Vector2f(500.0f,500.0f);
+            S.DisplayedString = "You Scored " + Score.ToString() + " Points";
+            while (window.IsOpen())
+            {
+                window.DispatchEvents();
+                window.Clear();
+                window.Draw(S);
+                window.Display();
+            }
+        }
 	}
 }

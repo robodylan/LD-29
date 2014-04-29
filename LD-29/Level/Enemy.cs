@@ -42,8 +42,11 @@ namespace LD_29.Level
 				}
 				else if (fixtureB.CollisionCategories == Category.Cat16)
 				{
-					if (OnDead != null)
-						OnDead(this, EventArgs.Empty);
+                    if (OnDead != null)
+                    {
+                        Game.Score =+ 1;
+                        OnDead(this, EventArgs.Empty);
+                    }
 				}
 			}
 			return true;

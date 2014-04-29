@@ -32,5 +32,10 @@ namespace LD_29
 		{
 			SoundBox.Text = "Sound (" + trackBar1.Value + "%)";
 		}
+
+        private void SoundBox_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
 	}
 }
